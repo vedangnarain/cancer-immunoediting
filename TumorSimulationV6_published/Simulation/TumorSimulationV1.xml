@@ -1,0 +1,169 @@
+<CompuCell3D Revision="20181205" Version="3.7.9">
+   
+   <Potts>
+      
+      <!-- Basic properties of CPM (GGH) algorithm -->
+      <Dimensions x="250" y="250" z="1"/>
+      <Steps>10000000</Steps>
+      <Temperature>25.0</Temperature>
+      <NeighborOrder>3</NeighborOrder>
+      <Boundary_x>Periodic</Boundary_x>
+      <Boundary_y>Periodic</Boundary_y>
+   </Potts>
+   
+   <Plugin Name="CellType">
+      
+      <!-- Listing all cell types in the simulation -->
+      <CellType TypeId="0" TypeName="Medium"/>
+      <CellType TypeId="1" TypeName="Proliferating"/>
+      <CellType TypeId="2" TypeName="Quiescent"/>
+      <CellType TypeId="3" TypeName="Necrotic"/>
+      <CellType TypeId="4" TypeName="CTL"/>
+   </Plugin>
+   
+   <Plugin Name="Volume"/>
+   
+   <Plugin Name="CenterOfMass">
+   
+      <!-- Module tracking center of mass of each cell -->
+   </Plugin>
+   
+   <Plugin Name="NeighborTracker">
+   
+      <!-- Module tracking neighboring cells of each cell -->
+   </Plugin>
+   
+   <Plugin Name="BoundaryPixelTracker">
+      
+      <!-- Module tracking boundary pixels of each cell -->
+      <NeighborOrder>1</NeighborOrder>
+   </Plugin>
+   
+   <Plugin Name="Contact">
+   
+      <!-- Specification of adhesion energies -->
+      <Energy Type1="Medium" Type2="Medium">10.0</Energy>
+      <Energy Type1="Medium" Type2="Proliferating">20.0</Energy>
+      <Energy Type1="Medium" Type2="Quiescent">20.0</Energy>
+      <Energy Type1="Medium" Type2="Necrotic">20.0</Energy>
+      <Energy Type1="Medium" Type2="CTL">20.0</Energy>
+      <Energy Type1="Proliferating" Type2="Proliferating">8.0</Energy>
+      <Energy Type1="Proliferating" Type2="Quiescent">11.0</Energy>
+      <Energy Type1="Proliferating" Type2="Necrotic">10.0</Energy>
+      <Energy Type1="Proliferating" Type2="CTL">13.0</Energy>
+      <Energy Type1="Quiescent" Type2="Quiescent">8.0</Energy>
+      <Energy Type1="Quiescent" Type2="Necrotic">9.0</Energy>
+      <Energy Type1="Quiescent" Type2="CTL">13.0</Energy>
+      <Energy Type1="Necrotic" Type2="Necrotic">8.0</Energy>
+      <Energy Type1="Necrotic" Type2="CTL">13.0</Energy>
+      <Energy Type1="CTL" Type2="CTL">100.0</Energy>
+      <NeighborOrder>3</NeighborOrder>
+   </Plugin>
+   
+    <Plugin Name="Chemotaxis">
+    
+       <!-- Specification of chemotaxis properties of select cell types. -->
+       <ChemicalField Name="Attractant" Source="DiffusionSolverFE">
+            <ChemotaxisByType ChemotactTowards="" Lambda="25000.0" SaturationCoef="10.0" Type="CTL"/>
+       </ChemicalField>
+    </Plugin>
+
+    <Plugin Name="Secretion">
+
+       <!-- Specification of secretion properties of select cell types. -->
+    </Plugin>
+   
+   <Steppable Type="DiffusionSolverFE">
+      
+      <!-- Specification of PDE solvers -->
+      <DiffusionField Name="Survival">
+         <DiffusionData>
+            <FieldName>Survival</FieldName>
+            <GlobalDiffusionConstant>10</GlobalDiffusionConstant>
+            <GlobalDecayConstant>1e-05</GlobalDecayConstant>
+            <InitialConcentrationExpression>10.0</InitialConcentrationExpression>
+            <DiffusionCoefficient CellType="Proliferating">0.1</DiffusionCoefficient>
+            <DiffusionCoefficient CellType="Quiescent">0.1</DiffusionCoefficient>
+            <DiffusionCoefficient CellType="Necrotic">0.1</DiffusionCoefficient>
+            <DecayCoefficient CellType="Proliferating">0.0001</DecayCoefficient>
+            <DecayCoefficient CellType="Quiescent">0.0001</DecayCoefficient>
+            <DecayCoefficient CellType="Necrotic">0.0001</DecayCoefficient>
+         </DiffusionData>
+         <SecretionData>
+         </SecretionData>
+         <BoundaryConditions>
+            <Plane Axis="X">
+               <ConstantValue PlanePosition="Min" Value="10.0"/>
+               <ConstantValue PlanePosition="Max" Value="10.0"/>
+            </Plane>
+            <Plane Axis="Y">
+               <ConstantValue PlanePosition="Min" Value="10.0"/>
+               <ConstantValue PlanePosition="Max" Value="10.0"/>
+            </Plane>
+         </BoundaryConditions>
+      </DiffusionField>
+      <DiffusionField Name="Growth">
+         <DiffusionData>
+            <FieldName>Growth</FieldName>
+            <GlobalDiffusionConstant>10</GlobalDiffusionConstant>
+            <GlobalDecayConstant>1e-05</GlobalDecayConstant>
+            <InitialConcentrationExpression>10.0</InitialConcentrationExpression>
+            <DiffusionCoefficient CellType="Proliferating">0.1</DiffusionCoefficient>
+            <DiffusionCoefficient CellType="Quiescent">0.1</DiffusionCoefficient>
+            <DiffusionCoefficient CellType="Necrotic">0.1</DiffusionCoefficient>
+            <DecayCoefficient CellType="Proliferating">0.0001</DecayCoefficient>
+            <DecayCoefficient CellType="Quiescent">0.0001</DecayCoefficient>
+            <DecayCoefficient CellType="Necrotic">0.0001</DecayCoefficient>
+         </DiffusionData>
+         <SecretionData>
+         </SecretionData>
+        <BoundaryConditions>
+            <Plane Axis="X">
+               <ConstantValue PlanePosition="Min" Value="10.0"/>
+               <ConstantValue PlanePosition="Max" Value="10.0"/>
+            </Plane>
+            <Plane Axis="Y">
+               <ConstantValue PlanePosition="Min" Value="10.0"/>
+               <ConstantValue PlanePosition="Max" Value="10.0"/>
+            </Plane>
+         </BoundaryConditions>
+      </DiffusionField>
+      <DiffusionField Name="Attractant">
+         <DiffusionData>
+            <FieldName>Attractant</FieldName>
+            <GlobalDiffusionConstant>10.0</GlobalDiffusionConstant>
+            <GlobalDecayConstant>0.01</GlobalDecayConstant>
+            <DiffusionCoefficient CellType="Proliferating">0.1</DiffusionCoefficient>
+            <DiffusionCoefficient CellType="Quiescent">0.1</DiffusionCoefficient>
+            <DiffusionCoefficient CellType="Necrotic">0.1</DiffusionCoefficient>
+         </DiffusionData>
+         <SecretionData>
+            <Secretion Type="Proliferating">0.1</Secretion>
+            <Secretion Type="Quiescent">0.1</Secretion>
+            <Secretion Type="Necrotic">0.3</Secretion>
+         </SecretionData>
+         <BoundaryConditions>
+            <Plane Axis="X">
+               <ConstantDerivative PlanePosition="Min" Value="0.0"/>
+               <ConstantDerivative PlanePosition="Max" Value="0.0"/>
+            </Plane>
+            <Plane Axis="Y">
+               <ConstantDerivative PlanePosition="Min" Value="0.0"/>
+               <ConstantDerivative PlanePosition="Max" Value="0.0"/>
+            </Plane>
+         </BoundaryConditions>
+      </DiffusionField>
+   </Steppable>
+
+   <Steppable Type="BlobInitializer">
+      
+      <!-- Initial layout of cells in the form of spherical (circular in 2D) blob -->
+      <Region>
+         <Center x="125" y="125" z="0"/>
+         <Radius>50</Radius>
+         <Gap>0</Gap>
+         <Width>5</Width>
+         <Types>Proliferating</Types> 
+      </Region>
+   </Steppable>
+</CompuCell3D>
